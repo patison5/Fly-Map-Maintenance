@@ -104,7 +104,7 @@ const Plane = function () {
     setTimeout(() => {
       if (!_isEnd)
         this.updatePosition();
-    }, 100);
+    }, 1000);
   }
 
   this.drawCurrentPosition = function () {
