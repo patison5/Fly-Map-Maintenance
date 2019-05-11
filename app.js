@@ -39,53 +39,43 @@ const Plane = function () {
   this.arrivingLat = 55.751244;
   this.arrivingLon = 37.618423;
 
-  this.posX = this.arrivingLat;
-  this.posY = this.arrivingLon;
+  this.curLat = this.arrivingLat;
+  this.curLon = this.arrivingLon;
 
-  this.lineFunc = function (x) {
-    let x1 = this.destinationLat;
-    let y1 = this.destinationLon;
+  this.destinationCors = {
+    x: mercX(this.destinationLon) - mercX(clon),
+    y: mercY(this.destinationLat) - mercY(clat)
+  }
 
-    let x2 = this.arrivingLat;
-    let y2 = this.arrivingLon;
-
-    let y = (x - x1) / (x2 - x1) * (y2 - y1) + y1;
+  this.arrivingCors = {
+    x: mercX(this.arrivingLon) - mercX(clon),
+    y: mercY(this.arrivingLat) - mercY(clat)
   }
 
   this.drawMainPoints = function () {
-    var x1 = mercX(this.arrivingLon) - mercX(clon);
-    var y1 = mercY(this.arrivingLat) - mercY(clat);
-
-    var x2 = mercX(this.destinationLon) - mercX(clon);
-    var y2 = mercY(this.destinationLat) - mercY(clat);
-
     fill(255,0,255, 600);
-    ellipse(x1,y1,20,20);
-    ellipse(x2,y2,20,20)
+    ellipse(this.arrivingCors.x,this.arrivingCors.y,12,12);
+    ellipse(this.destinationCors.x,this.destinationCors.y,12,12)
   }
 
   this.drawLineBetweenPoints = function () {
-    var x1 = mercX(this.arrivingLon) - mercX(clon);
-    var y1 = mercY(this.arrivingLat) - mercY(clat);
-
-    var x2 = mercX(this.destinationLon) - mercX(clon);
-    var y2 = mercY(this.destinationLat) - mercY(clat);
-
-    
     stroke(255);
-    line(x1, y1, x2, y2);
+    line(this.arrivingCors.x, this.arrivingCors.y, this.destinationCors.x, this.destinationCors.y);
+  }
+
+  this.updatePosition = function () {
+    console.log("arriving coordinates", this.arrivingCors)
+    console.log("destination coordinates", this.destinationCors)
+  }
+
+  this.drawCurrentPosition = function () {
+
   }
 }
 
 Plane.prototype = {
   constructor : Plane,
 };
-
-var lat = 55.751244;
-var lon = 37.618423;
-
-var lat2 = 54.97328;
-var lon2 = -1.61396;
 
 function setup() {
   createCanvas(ww, hh);
@@ -95,8 +85,13 @@ function setup() {
   image(mapimg, 0, 0);
 
 
+
+
+
   var plane = new Plane();
+
   plane.drawLineBetweenPoints()
   plane.drawMainPoints();
-  
+
+  plane.updatePosition();
 }
