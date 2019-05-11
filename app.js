@@ -1,5 +1,7 @@
 var mapimg;
 var plane = null;
+var planes;
+
 var currentPosDomElement  = null;
 var arrivingPosDomElement = null;
 var destinPosDomElement   = null;
@@ -13,6 +15,34 @@ var ww = 1024;
 var hh = 512;
 
 var zoom = 1;
+
+var TOWNS = {
+  Moscow: {
+    latitue: 55.751244,
+    longtitude: 37.618423,
+    country: 'RUSSIA'
+  },
+  NewCastle: {
+    latitue: 54.97328,
+    longtitude: -1.61396,
+    country: 'ENGLAND'
+  },
+  GreenwoodVillage: {
+    latitue: 39.617210,
+    longtitude: -104.950813,
+    country: 'USA'
+  },
+  Greenville: {
+    latitue: 5.012319,
+    longtitude: -9.041973,
+    country: 'Liberia'
+  },
+  Rome: {
+    latitue:  41.906204,
+    longtitude: 12.507516,
+    country: 'Italy'
+  }
+}
 
 function preload() {
   // The clon and clat in this url are edited to be in the correct order.
@@ -40,12 +70,12 @@ function mercY(lat) {
 }
 
 
-const Plane = function () {
-  this.destinationLat = 54.97328;
-  this.destinationLon = -1.61396;
+const Plane = function (arriving, destination) {
+  this.destinationLat = destination.latitue;
+  this.destinationLon = destination.longtitude;
 
-  this.arrivingLat = 55.751244;
-  this.arrivingLon = 37.618423;
+  this.arrivingLat = arriving.latitue;
+  this.arrivingLon = arriving.longtitude;
 
   this.curLat = this.arrivingLat;
   this.curLon = this.arrivingLon;
@@ -129,9 +159,18 @@ Plane.prototype = {
 function setup() {
   createCanvas(ww, hh);
 
-  plane = new Plane();
 
-  plane.updatePosition();
+  planes = [
+    new Plane(TOWNS.Moscow, TOWNS.NewCastle),
+    new Plane(TOWNS.GreenwoodVillage, TOWNS.Greenville),
+    new Plane(TOWNS.NewCastle, TOWNS.GreenwoodVillage),
+    new Plane(TOWNS.Rome, TOWNS.Moscow),
+    new Plane(TOWNS.Greenville, TOWNS.NewCastle),
+  ]
+
+  for (var id in planes) {
+    planes[id].updatePosition()
+  }
 
   currentPosDomElement  = document.getElementsByClassName('js-currentPos');
   arrivingPosDomElement = document.getElementsByClassName('js-arrivingPos');
@@ -147,13 +186,15 @@ function draw () {
     imageMode(CENTER);
     image(mapimg, 0, 0);
 
-    plane.drawLineBetweenPoints()
-    plane.drawMainPoints();
-    plane.drawCurrentPosition();
-    plane.showCurrentPositionOnMap();
+    for (var id in planes) {
+      planes[id].drawLineBetweenPoints()
+      planes[id].drawMainPoints();
+      planes[id].drawCurrentPosition();
+      planes[id].showCurrentPositionOnMap();
+    }
 
-    currentPosDomElement[0].innerHTML = "X: " + plane.currentCors.x;
-    currentPosDomElement[1].innerHTML = "Y: " + plane.currentCors.y;
+    currentPosDomElement[0].innerHTML = "X: " + planes[0].currentCors.x;
+    currentPosDomElement[1].innerHTML = "Y: " + planes[0].currentCors.y;
   } else {
     console.log("Вы, блять, прилетели!");
   }
