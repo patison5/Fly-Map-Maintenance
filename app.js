@@ -1,4 +1,7 @@
 var mapimg;
+var plane = null;
+
+var _isEnd = false;
 
 var clat = 0;
 var clon = 0;
@@ -52,6 +55,11 @@ const Plane = function () {
     y: mercY(this.arrivingLat) - mercY(clat)
   }
 
+  this.currentCors = {
+    x: mercX(this.curLon) - mercX(clon),
+    y: mercY(this.curLat) - mercY(clat)
+  }
+
   this.drawMainPoints = function () {
     fill(255,0,255, 600);
     ellipse(this.arrivingCors.x,this.arrivingCors.y,12,12);
@@ -63,13 +71,47 @@ const Plane = function () {
     line(this.arrivingCors.x, this.arrivingCors.y, this.destinationCors.x, this.destinationCors.y);
   }
 
+  this.getNewYPosition = function (x) {
+    let x1 = this.destinationCors.x;
+    let y1 = this.destinationCors.y;
+
+    let x2 = this.arrivingCors.x;
+    let y2 = this.arrivingCors.y;
+
+    let y = (x - x1) / (x2 - x1) * (y2 - y1) + y1;
+
+    return y;
+  }
+
   this.updatePosition = function () {
-    console.log("arriving coordinates", this.arrivingCors)
-    console.log("destination coordinates", this.destinationCors)
+    let delta = Math.abs(this.destinationCors.x - this.arrivingCors.x) / 100;
+
+    if (this.currentCors.x > this.destinationCors.x) {
+      this.currentCors.x -= delta;
+      this.currentCors.y = this.getNewYPosition(this.currentCors.x)
+    } else {
+      this.currentCors.x += delta;
+      this.currentCors.y = this.getNewYPosition(this.currentCors.x)
+    }
+
+    if (Math.abs(this.currentCors.x - this.destinationCors.x) < delta) {
+      _isEnd = true;
+      noLoop();
+    }
+
+    console.log(Math.abs(this.currentCors.x - this.destinationCors.x))
+
+    setTimeout(() => {
+      if (!_isEnd)
+        this.updatePosition();
+    }, 100);
   }
 
   this.drawCurrentPosition = function () {
-
+    // console.log("current coordinates", this.currentCors);
+    fill(255,0,0, 1000);
+    stroke(0);
+    ellipse(this.currentCors.x,this.currentCors.y,10,10);
   }
 }
 
@@ -79,19 +121,26 @@ Plane.prototype = {
 
 function setup() {
   createCanvas(ww, hh);
-  translate(width / 2, height / 2);
 
-  imageMode(CENTER);
-  image(mapimg, 0, 0);
-
-
-
-
-
-  var plane = new Plane();
-
-  plane.drawLineBetweenPoints()
-  plane.drawMainPoints();
+  plane = new Plane();
 
   plane.updatePosition();
+}
+
+function draw () {
+
+  if (!_isEnd) {
+    clear()
+    translate(width / 2, height / 2);
+
+    imageMode(CENTER);
+    image(mapimg, 0, 0);
+
+    plane.drawLineBetweenPoints()
+    plane.drawMainPoints();
+    plane.drawCurrentPosition();
+  } else {
+    alert("Вы, блять, прилетели!");
+  }
+  
 }
