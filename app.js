@@ -1,5 +1,8 @@
 var mapimg;
 var plane = null;
+var currentPosDomElement  = null;
+var arrivingPosDomElement = null;
+var destinPosDomElement   = null;
 
 var _isEnd = false;
 
@@ -17,6 +20,8 @@ function preload() {
     clon + ',' + clat + ',' + zoom + '/' +
     ww + 'x' + hh +
     '?access_token=pk.eyJ1IjoiY29kaW5ndHJhaW4iLCJhIjoiY2l6MGl4bXhsMDRpNzJxcDh0a2NhNDExbCJ9.awIfnl6ngyHoB3Xztkzarw');
+
+  console.log(mapimg)
 }
 
 function mercX(lon) {
@@ -99,8 +104,6 @@ const Plane = function () {
       noLoop();
     }
 
-    console.log(Math.abs(this.currentCors.x - this.destinationCors.x))
-
     setTimeout(() => {
       if (!_isEnd)
         this.updatePosition();
@@ -108,10 +111,14 @@ const Plane = function () {
   }
 
   this.drawCurrentPosition = function () {
-    // console.log("current coordinates", this.currentCors);
     fill(255,0,0, 1000);
     stroke(0);
     ellipse(this.currentCors.x,this.currentCors.y,10,10);
+  }
+
+  this.showCurrentPositionOnMap = function () {
+    // console.log(this.currentCors.x, this.currentCors.y)
+
   }
 }
 
@@ -125,6 +132,10 @@ function setup() {
   plane = new Plane();
 
   plane.updatePosition();
+
+  currentPosDomElement  = document.getElementsByClassName('js-currentPos');
+  arrivingPosDomElement = document.getElementsByClassName('js-arrivingPos');
+  destinPosDomElement   = document.getElementsByClassName('js-destinPos');
 }
 
 function draw () {
@@ -139,8 +150,12 @@ function draw () {
     plane.drawLineBetweenPoints()
     plane.drawMainPoints();
     plane.drawCurrentPosition();
+    plane.showCurrentPositionOnMap();
+
+    currentPosDomElement[0].innerHTML = "X: " + plane.currentCors.x;
+    currentPosDomElement[1].innerHTML = "Y: " + plane.currentCors.y;
   } else {
-    alert("Вы, блять, прилетели!");
+    console.log("Вы, блять, прилетели!");
   }
   
 }
