@@ -16,6 +16,7 @@ var hh = 512;
 
 var zoom = 1;
 
+// list of towns
 var TOWNS = {
   Moscow: {
     latitue: 55.751244,
@@ -239,6 +240,8 @@ var TOWNS = {
   }
 }
 
+
+// preloading backgound image
 function preload() {
   // The clon and clat in this url are edited to be in the correct order.
   mapimg = loadImage('https://api.mapbox.com/styles/v1/mapbox/dark-v9/static/' +
@@ -249,6 +252,7 @@ function preload() {
   console.log(mapimg)
 }
 
+//calculation map X coordinate
 function mercX(lon) {
   lon = radians(lon);
   var a = (256 / PI) * pow(2, zoom);
@@ -256,6 +260,7 @@ function mercX(lon) {
   return a * b;
 }
 
+//calculation map Y coordinate
 function mercY(lat) {
   lat = radians(lat);
   var a = (256 / PI) * pow(2, zoom);
@@ -265,16 +270,23 @@ function mercY(lat) {
 }
 
 
+
+// Plane class
 const Plane = function (arriving, destination) {
+
+  //arriving from
   this.destinationLat = destination.latitue;
   this.destinationLon = destination.longtitude;
 
+  //arriving to
   this.arrivingLat = arriving.latitue;
   this.arrivingLon = arriving.longtitude;
 
+  //current location of this plane
   this.curLat = this.arrivingLat;
   this.curLon = this.arrivingLon;
 
+  // map coordinates
   this.destinationCors = {
     x: mercX(this.destinationLon) - mercX(clon),
     y: mercY(this.destinationLat) - mercY(clat)
@@ -290,17 +302,23 @@ const Plane = function (arriving, destination) {
     y: mercY(this.curLat) - mercY(clat)
   }
 
+
+  // draw dest and arr points function
   this.drawMainPoints = function () {
     fill(255,0,255, 600);
     ellipse(this.arrivingCors.x,this.arrivingCors.y,12,12);
     ellipse(this.destinationCors.x,this.destinationCors.y,12,12)
   }
 
+
+  //draw line between dst and arr points function
   this.drawLineBetweenPoints = function () {
     stroke(255);
     line(this.arrivingCors.x, this.arrivingCors.y, this.destinationCors.x, this.destinationCors.y);
   }
 
+
+  // function that returns Y posistion
   this.getNewYPosition = function (x) {
     let x1 = this.destinationCors.x;
     let y1 = this.destinationCors.y;
@@ -313,6 +331,8 @@ const Plane = function (arriving, destination) {
     return y;
   }
 
+
+  //function that create a new position
   this.updatePosition = function () {
     let delta = Math.abs(this.destinationCors.x - this.arrivingCors.x) / 100;
 
@@ -335,15 +355,24 @@ const Plane = function (arriving, destination) {
     }, 1000);
   }
 
+  // function that draw plane current position
   this.drawCurrentPosition = function () {
     fill(255,0,0, 1000);
     stroke(0);
     ellipse(this.currentCors.x,this.currentCors.y,10,10);
   }
 
+  //function that shows the info about the [0] plane
   this.showCurrentPositionOnMap = function () {
     // console.log(this.currentCors.x, this.currentCors.y)
+    arrivingPosDomElement[0].innerHTML = "X: " + planes[0].arrivingCors.x;
+    arrivingPosDomElement[1].innerHTML = "Y: " + planes[0].arrivingCors.y;
 
+    destinPosDomElement[0].innerHTML = "X: " + planes[0].destinationCors.x;
+    destinPosDomElement[1].innerHTML = "Y: " + planes[0].destinationCors.y;
+
+    currentPosDomElement[0].innerHTML = "X: " + planes[0].currentCors.x;
+    currentPosDomElement[1].innerHTML = "Y: " + planes[0].currentCors.y;
   }
 }
 
@@ -354,23 +383,8 @@ Plane.prototype = {
 function setup() {
   createCanvas(ww, hh);
 
-
   planes = [
     new Plane(TOWNS.Moscow, TOWNS.NewCastle),
-    new Plane(TOWNS.GreenwoodVillage, TOWNS.Greenville),
-    new Plane(TOWNS.NewCastle, TOWNS.GreenwoodVillage),
-    new Plane(TOWNS.Rome, TOWNS.Arkhangelsk),
-    new Plane(TOWNS.Greenville, TOWNS.Biysk),
-    new Plane(TOWNS.Greenville, TOWNS.NewCastle),
-    new Plane(TOWNS.Vladimir, TOWNS.Kaliningrad),
-    new Plane(TOWNS.Kiev, TOWNS.Kostroma),
-    new Plane(TOWNS.Yekaterinburg, TOWNS.Ivanovo),
-    new Plane(TOWNS.Kaluga, TOWNS.Voronezh),
-    new Plane(TOWNS.Irkutsk, TOWNS.Murmansk),
-    new Plane(TOWNS.Ivanovo, TOWNS.Izhevsk),
-    new Plane(TOWNS.Bratsk, TOWNS.Lipetsk),
-    new Plane(TOWNS.Izhevsk, TOWNS.Krasnodar),
-    new Plane(TOWNS.Murmansk, TOWNS.Kemerovo),
   ]
 
   for (var id in planes) {
@@ -397,9 +411,6 @@ function draw () {
       planes[id].drawCurrentPosition();
       planes[id].showCurrentPositionOnMap();
     }
-
-    currentPosDomElement[0].innerHTML = "X: " + planes[0].currentCors.x;
-    currentPosDomElement[1].innerHTML = "Y: " + planes[0].currentCors.y;
   } else {
     console.log("Вы, блять, прилетели!");
   }
