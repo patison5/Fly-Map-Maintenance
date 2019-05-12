@@ -1,5 +1,10 @@
 var RENDER_SPEED = 1000;
 
+var textDom = document.createElement('div');
+textDom.className = "data-table__info";
+textDom.innerHTML = "Russia";
+document.getElementsByTagName('body')[0].appendChild(textDom);
+
 var mapimg;
 var plane = null;
 var planes;
@@ -56,10 +61,12 @@ const Plane = function (arriving, destination) {
   //arriving from
   this.destinationLat = destination.latitue;
   this.destinationLon = destination.longtitude;
+  this.destinationCountry = destination.country;
 
   //arriving to
   this.arrivingLat = arriving.latitue;
   this.arrivingLon = arriving.longtitude;
+  this.arrivingCountry = arriving.country;
 
   //current location of this plane
   this.curLat = this.arrivingLat;
@@ -240,7 +247,38 @@ function draw () {
     for (var id in planes) {
         planes[id].drawLineBetweenPoints()
         planes[id].drawMainPoints();
-        planes[id].showCurrentPositionOnMap();
+        //planes[id].showCurrentPositionOnMap();
+
+        let X = mouseX - width / 2;
+        let Y = mouseY - height / 2;
+
+        if ((X < planes[id].destinationCors.x + 6) && (X > planes[id].destinationCors.x - 6)) {
+          if ((Y < planes[id].destinationCors.y + 6) && (Y > planes[id].destinationCors.y - 6)) {
+            textDom.innerHTML = planes[id].destinationCountry;
+
+            textDom.style.left = planes[id].destinationCors.x + width / 2 + 10;
+            textDom.style.top  = planes[id].destinationCors.y + height / 2 + 10;
+          }
+        }
+
+        if ((X < planes[id].arrivingCors.x + 6) && (X > planes[id].arrivingCors.x - 6)) {
+          if ((Y < planes[id].arrivingCors.y + 6) && (Y > planes[id].arrivingCors.y - 6)) {
+            textDom.innerHTML = planes[id].arrivingCountry;
+
+            textDom.style.left = planes[id].arrivingCors.x + width / 2 + 10;
+            textDom.style.top  = planes[id].arrivingCors.y + height / 2 + 10;
+          }
+        }
+
+        if ((X < planes[id].currentCors.x + 5) && (X > planes[id].currentCors.x - 5)) {
+          if ((Y < planes[id].currentCors.y + 5) && (Y > planes[id].currentCors.y - 5)) {
+            textDom.innerHTML = "Текущее местоположение:\n";
+            textDom.innerHTML = "(" + planes[id].currentCors.x + ", " + planes[id].currentCors.y + ")";
+
+            textDom.style.left = planes[id].currentCors.x + width / 2 + 10;
+            textDom.style.top  = planes[id].currentCors.y + height / 2 + 10;
+          }
+        }
     }
 
     //thats need for showing the plane dots on the top of all other elements....
