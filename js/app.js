@@ -1,3 +1,5 @@
+var RENDER_SPEED = 1000;
+
 var mapimg;
 var plane = null;
 var planes;
@@ -130,7 +132,7 @@ const Plane = function (arriving, destination) {
     setTimeout(() => {
       if (this._isFlying)
         this.updatePosition();
-    }, 100);
+    }, RENDER_SPEED);
   }
 
   // function that draw plane current position
@@ -197,20 +199,20 @@ function setup() {
 
   planes = [
     new Plane(TOWNS.Moscow, TOWNS.NewCastle),
-    new Plane(TOWNS.GreenwoodVillage, TOWNS.NewCastle),
-    new Plane(TOWNS.Moscow, TOWNS.GreenwoodVillage),
-    new Plane(TOWNS.Moscow, TOWNS.Greenville),
-    new Plane(TOWNS.Greenville, TOWNS.GreenwoodVillage),
-    new Plane(TOWNS.Greenville, TOWNS.NewCastle),
+    // new Plane(TOWNS.GreenwoodVillage, TOWNS.NewCastle),
+    // new Plane(TOWNS.Moscow, TOWNS.GreenwoodVillage),
+    // new Plane(TOWNS.Moscow, TOWNS.Greenville),
+    // new Plane(TOWNS.Greenville, TOWNS.GreenwoodVillage),
+    // new Plane(TOWNS.Greenville, TOWNS.NewCastle),
 
-    new Plane(TOWNS.Rome, TOWNS.GreenwoodVillage),
-    new Plane(TOWNS.Greenville, TOWNS.Arkhangelsk),
-    new Plane(TOWNS.Rome, TOWNS.Arkhangelsk),
-    new Plane(TOWNS.AustralianCapitalTerritory, TOWNS.Arkhangelsk),
-    new Plane(TOWNS.GreenwoodVillage, TOWNS.AustralianCapitalTerritory),
-    new Plane(TOWNS.Makhachkala, TOWNS.AustralianCapitalTerritory),
-    new Plane(TOWNS.Makhachkala, TOWNS.Argana),
-    new Plane(TOWNS.Argana, TOWNS.Moscow),
+    // new Plane(TOWNS.Rome, TOWNS.GreenwoodVillage),
+    // new Plane(TOWNS.Greenville, TOWNS.Arkhangelsk),
+    // new Plane(TOWNS.Rome, TOWNS.Arkhangelsk),
+    // new Plane(TOWNS.AustralianCapitalTerritory, TOWNS.Arkhangelsk),
+    // new Plane(TOWNS.GreenwoodVillage, TOWNS.AustralianCapitalTerritory),
+    // new Plane(TOWNS.Makhachkala, TOWNS.AustralianCapitalTerritory),
+    // new Plane(TOWNS.Makhachkala, TOWNS.Argana),
+    // new Plane(TOWNS.Argana, TOWNS.Moscow),
   ]
 
   for (var id in planes) {
